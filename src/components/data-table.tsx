@@ -109,8 +109,6 @@ export const schema = z.object({
     keyword: z.string(),
     word: z.string(),
     createdOn: z.string(),
-    limit: z.string(),
-    reviewer: z.string(),
 });
 
 // Create a separate component for the drag handle
@@ -177,7 +175,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
     {
         accessorKey: "keyword",
-        header: "Keyword[Title]",
+        header: () => <div className="w-full text-center">Keyword [Title]</div>,
         cell: ({ row }) => (
             <div className="w-32">
                 <Badge
@@ -190,25 +188,20 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ),
     },
     {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: "word",
+        header: () => <div className="w-full text-center">Word</div>,
         cell: ({ row }) => (
             <Badge
                 variant="outline"
                 className="flex gap-1 px-1.5 text-muted-foreground [&_svg]:size-3"
             >
-                {row.original.word === "Done" ? (
-                    <CheckCircle2Icon className="text-green-500 dark:text-green-400" />
-                ) : (
-                    <LoaderIcon />
-                )}
                 {row.original.word}
             </Badge>
         ),
     },
     {
-        accessorKey: "target",
-        header: () => <div className="w-full text-right">Target</div>,
+        accessorKey: "created on",
+        header: () => <div className="w-full text-center">Created On</div>,
         cell: ({ row }) => (
             <form
                 onSubmit={(e) => {
@@ -227,78 +220,29 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
                     htmlFor={`${row.original.id}-target`}
                     className="sr-only"
                 >
-                    Target
+                    Created On
                 </Label>
                 <Input
-                    className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background"
-                    defaultValue={row.original.keyword}
+                    className="h-8 w-28 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background"
+                    defaultValue={row.original.createdOn}
                     id={`${row.original.id}-target`}
                 />
             </form>
         ),
     },
     {
-        accessorKey: "limit",
-        header: () => <div className="w-full text-right">Limit</div>,
-        cell: ({ row }) => (
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    toast.promise(
-                        new Promise((resolve) => setTimeout(resolve, 1000)),
-                        {
-                            loading: `Saving ${row.original.ArticleTitle}`,
-                            success: "Done",
-                            error: "Error",
-                        }
-                    );
-                }}
-            >
-                <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-                    Limit
-                </Label>
-                <Input
-                    className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background"
-                    defaultValue={row.original.limit}
-                    id={`${row.original.id}-limit`}
-                />
-            </form>
-        ),
-    },
-    {
-        accessorKey: "reviewer",
-        header: "Reviewer",
+        accessorKey: "action",
+        header: () => <div className="w-full text-center">Action</div>,
         cell: ({ row }) => {
-            const isAssigned = row.original.reviewer !== "Assign reviewer";
-
-            if (isAssigned) {
-                return row.original.reviewer;
-            }
-
             return (
                 <>
-                    <Label
-                        htmlFor={`${row.original.id}-reviewer`}
-                        className="sr-only"
+                    <Button
+                        variant="ghost"
+                        className="flex h-9 w-20 border rounded-sm border-lime-400 text-muted-foreground data-[state=open]:bg-muted "
+                        size="lg"
                     >
-                        Reviewer
-                    </Label>
-                    <Select>
-                        <SelectTrigger
-                            className="h-8 w-40"
-                            id={`${row.original.id}-reviewer`}
-                        >
-                            <SelectValue placeholder="Assign reviewer" />
-                        </SelectTrigger>
-                        <SelectContent align="end">
-                            <SelectItem value="Eddie Lake">
-                                Eddie Lake
-                            </SelectItem>
-                            <SelectItem value="Jamik Tashpulatov">
-                                Jamik Tashpulatov
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                        <p className="text-lime-500">View</p>
+                    </Button>
                 </>
             );
         },
@@ -609,17 +553,13 @@ export function DataTable({
     );
 }
 
-
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     const isMobile = useIsMobile();
 
     return (
         <Sheet>
             <SheetTrigger asChild className="text-left">
-                <Button
-                    variant="link"
-                    className="px-0 text-foreground"
-                >
+                <Button variant="link" className="px-0 text-foreground">
                     {item.ArticleTitle}
                 </Button>
             </SheetTrigger>
