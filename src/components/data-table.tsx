@@ -49,7 +49,6 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -227,7 +226,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     {
         accessorKey: "action",
         header: () => <div className="w-full text-center">Action</div>,
-        cell: ({ row }) => {
+        cell: ({ }) => {
             return (
                 <>
                     <Button
@@ -555,7 +554,7 @@ export function DataTable({
 }
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-    const isMobile = useIsMobile();
+    // const isMobile = useIsMobile();
 
     return (
         <Sheet>
