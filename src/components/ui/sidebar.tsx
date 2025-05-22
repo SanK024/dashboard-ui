@@ -31,6 +31,7 @@ import {
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "22rem";
+const SIDEBAR_GAP = "13rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
@@ -154,6 +155,7 @@ const SidebarProvider = React.forwardRef<
                         style={
                             {
                                 "--sidebar-width": SIDEBAR_WIDTH,
+                                "--sidebar-gap":SIDEBAR_GAP,
                                 "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
                                 ...style,
                             } as React.CSSProperties
@@ -255,7 +257,7 @@ const Sidebar = React.forwardRef<
                 {/* here is the gap b/w sidebar and dataset*/}
                 <div
                     className={cn(
-                        "relative w-[--sidebar-width] bg-transparent transition-[width] duration-200 ease-linear",
+                        "relative w-[--sidebar-gap] bg-transparent transition-[width] duration-200 ease-linear",
                         "group-data-[collapsible=offcanvas]:w-0",
                         "group-data-[side=right]:rotate-180",
                         variant === "floating" || variant === "inset"

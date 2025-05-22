@@ -320,20 +320,20 @@ export function DataTable({
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <Input
                     type="text"
-                    placeholder="Seach by Article Tile or Keyword"
+                    placeholder="Search by Article Title or Keyword"
                     onChange={(event) => {
                         const value = event.target.value;
                         table.getColumn("ArticleTitle")?.setFilterValue(value);
                     }}
-                    className="max-w-sm"
+                    className="w-full max-w-sm md:max-w-md"
                 />
             </div>
             <TabsContent
                 value="outline"
-                className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+                className="relative flex flex-col gap-4 overflow-hidden px-4 lg:px-6"
             >
                 <div className="overflow-hidden rounded-lg border">
-                    <div className="min-w-[900px] w-full overflow-x-auto">
+                    <div className="overflow-x-auto">
                         <DndContext
                             collisionDetection={closestCenter}
                             modifiers={[restrictToVerticalAxis]}
@@ -341,7 +341,7 @@ export function DataTable({
                             sensors={sensors}
                             id={sortableId}
                         >
-                            <Table>
+                            <Table className="w-full min-w-[600px]">
                                 <TableHeader className="sticky top-0 z-10 bg-muted">
                                     {table
                                         .getHeaderGroups()
@@ -355,6 +355,7 @@ export function DataTable({
                                                                 colSpan={
                                                                     header.colSpan
                                                                 }
+                                                                className="px-2 py-3 text-xs whitespace-nowrap"
                                                             >
                                                                 {header.isPlaceholder
                                                                     ? null
@@ -372,7 +373,7 @@ export function DataTable({
                                             </TableRow>
                                         ))}
                                 </TableHeader>
-                                <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                                <TableBody>
                                     {table.getRowModel().rows?.length ? (
                                         <SortableContext
                                             items={dataIds}
@@ -404,17 +405,19 @@ export function DataTable({
                         </DndContext>
                     </div>
                 </div>
-                <div className="flex items-center justify-between px-4">
-                    <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
+
+                {/* Make pagination responsive */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                    <div className="hidden sm:flex flex-1 text-sm text-muted-foreground">
                         {table.getFilteredSelectedRowModel().rows.length} of{" "}
                         {table.getFilteredRowModel().rows.length} row(s)
                         selected.
                     </div>
-                    <div className="flex w-full items-center gap-8 lg:w-fit">
-                        <div className="hidden items-center gap-2 lg:flex">
+                    <div className="flex flex-col sm:flex-row w-full sm:w-fit items-center gap-4">
+                        <div className="hidden sm:flex items-center gap-2">
                             <Label
                                 htmlFor="rows-per-page"
-                                className="text-sm font-medium"
+                                className="text-sm font-medium whitespace-nowrap"
                             >
                                 Rows per page
                             </Label>
@@ -448,14 +451,14 @@ export function DataTable({
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="flex w-fit items-center justify-center text-sm font-medium">
+                        <div className="flex items-center justify-center text-sm font-medium whitespace-nowrap">
                             Page {table.getState().pagination.pageIndex + 1} of{" "}
                             {table.getPageCount()}
                         </div>
-                        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+                        <div className="flex items-center gap-2">
                             <Button
                                 variant="outline"
-                                className="hidden h-8 w-8 p-0 lg:flex"
+                                className="hidden h-8 w-8 p-0 sm:flex"
                                 onClick={() => table.setPageIndex(0)}
                                 disabled={!table.getCanPreviousPage()}
                             >
@@ -488,7 +491,7 @@ export function DataTable({
                             </Button>
                             <Button
                                 variant="outline"
-                                className="hidden size-8 lg:flex"
+                                className="hidden size-8 sm:flex"
                                 size="icon"
                                 onClick={() =>
                                     table.setPageIndex(table.getPageCount() - 1)
@@ -501,24 +504,6 @@ export function DataTable({
                         </div>
                     </div>
                 </div>
-            </TabsContent>
-            <TabsContent
-                value="past-performance"
-                className="flex flex-col px-4 lg:px-6"
-            >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-            </TabsContent>
-            <TabsContent
-                value="key-personnel"
-                className="flex flex-col px-4 lg:px-6"
-            >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-            </TabsContent>
-            <TabsContent
-                value="focus-documents"
-                className="flex flex-col px-4 lg:px-6"
-            >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
             </TabsContent>
         </Tabs>
     );
