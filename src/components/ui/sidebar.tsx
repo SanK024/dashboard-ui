@@ -30,8 +30,8 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "22rem";
-const SIDEBAR_GAP = "13rem";
+const SIDEBAR_WIDTH = "20rem";
+const SIDEBAR_GAP = "10rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
@@ -161,7 +161,7 @@ const SidebarProvider = React.forwardRef<
                             } as React.CSSProperties
                         }
                         className={cn(
-                            "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+                            "group/sidebar-wrapper flex min-h-screen w-full has-[[data-variant=inset]]:bg-sidebar",
                             className
                         )}
                         ref={ref}
@@ -257,7 +257,7 @@ const Sidebar = React.forwardRef<
                 {/* here is the gap b/w sidebar and dataset*/}
                 <div
                     className={cn(
-                        "relative w-[--sidebar-gap] bg-transparent transition-[width] duration-200 ease-linear",
+                        "relative w-[--sidebar-width] bg-transparent transition-[width] duration-200 ease-linear",
                         "group-data-[collapsible=offcanvas]:w-0",
                         "group-data-[side=right]:rotate-180",
                         variant === "floating" || variant === "inset"
@@ -355,7 +355,7 @@ const SidebarInset = React.forwardRef<
         <main
             ref={ref}
             className={cn(
-                "relative flex flex-1 flex-col bg-background",
+                "relative flex flex-1 flex-col bg-background min-h-fit",
                 "md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
                 className
             )}

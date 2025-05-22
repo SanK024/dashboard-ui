@@ -37,6 +37,9 @@ import type {
 } from "@tanstack/react-table";
 
 import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -118,13 +121,36 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         accessorKey: "ArticleTitle",
         header: "Article Title",
         cell: ({ row }) => {
-            return <TableCellViewer item={row.original} />;
+            return (
+                <div className="w-[30rem] min-w-[30rem] max-w-[30rem]">
+                    <TableCellViewer item={row.original} />
+                </div>
+            );
         },
         enableHiding: false,
     },
     {
         accessorKey: "keyword",
-        header: () => <div className="w-full text-center">Keyword [Title]</div>,
+        header: ({ column }) => (
+            <div className="w-full text-center">
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="h-8 px-2 hover:bg-transparent"
+                >
+                    Keyword [Title]
+                    {column.getIsSorted() === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4" />
+                    ) : column.getIsSorted() === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                </Button>
+            </div>
+        ),
         cell: ({ row }) => (
             <div className="w-40">
                 <Badge
@@ -138,7 +164,26 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
     {
         accessorKey: "word",
-        header: () => <div className="w-full text-center">Word</div>,
+        header: ({ column }) => (
+            <div className="w-full text-center">
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="h-8 px-2 hover:bg-transparent"
+                >
+                    Word
+                    {column.getIsSorted() === "asc" ? (
+                        <ArrowUp className="ml-2 h-4 w-4" />
+                    ) : column.getIsSorted() === "desc" ? (
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    ) : (
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                </Button>
+            </div>
+        ),
         cell: ({ row }) => (
             <Badge
                 variant="outline"
