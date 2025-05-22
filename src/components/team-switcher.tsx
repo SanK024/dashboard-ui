@@ -36,11 +36,15 @@ export function TeamSwitcher({
     return (
         <SidebarMenu>
             <SidebarMenuItem>
+                <h2 className="text-5xl font-extrabold tracking-tight text-center mb-6 ">
+                    <span className="group-data-[collapsible=icon]:hidden"> abun </span>
+                    <span className=" hidden group-data-[collapsible=icon]:block"> a </span>
+                </h2>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="w-full justify-start rounded-full px-3 py-2 border bg-white shadow-sm data-[state=open]:bg-muted"
+                            className="w-full justify-start rounded-full px-3 py-2 border bg-white shadow-sm data-[state=open]:bg-muted group-data-[collapsible=icon]:ml-1"
                         >
                             <div className="flex items-center gap-2 mr-3">
                                 <activeTeam.logo />

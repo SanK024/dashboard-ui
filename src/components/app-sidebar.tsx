@@ -328,9 +328,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <h2 className="text-5xl font-extrabold tracking-tight text-center mb-6">
-                    abun
-                </h2>
                 <TeamSwitcher teams={data.teams} />
             </SidebarHeader>
             <SidebarContent>

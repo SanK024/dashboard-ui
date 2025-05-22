@@ -37,37 +37,21 @@ import type {
 } from "@tanstack/react-table";
 
 import {
-    CheckCircle2Icon,
-    CheckCircleIcon,
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronsLeftIcon,
     ChevronsRightIcon,
-    ColumnsIcon,
-    GripVerticalIcon,
-    LoaderIcon,
-    MoreVerticalIcon,
-    PlusIcon,
-    TrendingUpIcon,
 } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
-import type { ChartConfig } from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
@@ -82,17 +66,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import {
     Table,
     TableBody,
@@ -101,7 +75,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 export const schema = z.object({
     id: z.number(),
@@ -111,36 +85,11 @@ export const schema = z.object({
     createdOn: z.string(),
 });
 
-// Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }) {
-    const { attributes, listeners } = useSortable({
-        id,
-    });
-
-    return (
-        <Button
-            {...attributes}
-            {...listeners}
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:bg-transparent"
-        >
-            <GripVerticalIcon className="size-3 text-muted-foreground" />
-            <span className="sr-only">Drag to reorder</span>
-        </Button>
-    );
-}
-
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
-    {
-        id: "drag",
-        header: () => null,
-        cell: ({ row }) => <DragHandle id={row.original.id} />,
-    },
     {
         id: "select",
         header: ({ table }) => (
-            <div className="flex items-center justify-center">
+            <div className="flex ml-3 mr-5 my-4 items-center justify-center">
                 <Checkbox
                     checked={
                         table.getIsAllPageRowsSelected() ||
@@ -154,7 +103,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </div>
         ),
         cell: ({ row }) => (
-            <div className="flex items-center justify-center">
+            <div className="flex ml-3 mr-5 items-center justify-center">
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -177,7 +126,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         accessorKey: "keyword",
         header: () => <div className="w-full text-center">Keyword [Title]</div>,
         cell: ({ row }) => (
-            <div className="w-32">
+            <div className="w-40">
                 <Badge
                     variant="outline"
                     className="px-1.5 text-muted-foreground"
@@ -249,15 +198,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
     {
         id: "actions",
+        header: () => <div className="w-full text-center">Publish</div>,
         cell: () => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="ghost"
-                        className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+                        className="flex size-8 r text-muted-foreground data-[state=open]:bg-muted"
                         size="icon"
                     >
-                        <MoreVerticalIcon />
+                        <ChevronDownIcon />
                         <span className="sr-only">Open menu</span>
                     </Button>
                 </DropdownMenuTrigger>
@@ -365,73 +315,94 @@ export function DataTable({
     return (
         <Tabs
             defaultValue="outline"
-            className="flex w-full flex-col justify-start gap-6"
+            className="flex overflow-hidden w-full flex-col justify-start gap-6"
         >
             <div className="flex items-center justify-between px-4 lg:px-6">
-                <div className="flex items-center gap-2">add search bar</div>
+                <Input
+                    type="text"
+                    placeholder="Seach by Article Tile or Keyword"
+                    onChange={(event) => {
+                        const value = event.target.value;
+                        table.getColumn("ArticleTitle")?.setFilterValue(value);
+                    }}
+                    className="max-w-sm"
+                />
             </div>
             <TabsContent
                 value="outline"
                 className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
             >
                 <div className="overflow-hidden rounded-lg border">
-                    <DndContext
-                        collisionDetection={closestCenter}
-                        modifiers={[restrictToVerticalAxis]}
-                        onDragEnd={handleDragEnd}
-                        sensors={sensors}
-                        id={sortableId}
-                    >
-                        <Table>
-                            <TableHeader className="sticky top-0 z-10 bg-muted">
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => {
-                                            return (
-                                                <TableHead
-                                                    key={header.id}
-                                                    colSpan={header.colSpan}
-                                                >
-                                                    {header.isPlaceholder
-                                                        ? null
-                                                        : flexRender(
-                                                              header.column
-                                                                  .columnDef
-                                                                  .header,
-                                                              header.getContext()
-                                                          )}
-                                                </TableHead>
-                                            );
-                                        })}
-                                    </TableRow>
-                                ))}
-                            </TableHeader>
-                            <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                                {table.getRowModel().rows?.length ? (
-                                    <SortableContext
-                                        items={dataIds}
-                                        strategy={verticalListSortingStrategy}
-                                    >
-                                        {table.getRowModel().rows.map((row) => (
-                                            <DraggableRow
-                                                key={row.id}
-                                                row={row}
-                                            />
+                    <div className="min-w-[900px] w-full overflow-x-auto">
+                        <DndContext
+                            collisionDetection={closestCenter}
+                            modifiers={[restrictToVerticalAxis]}
+                            onDragEnd={handleDragEnd}
+                            sensors={sensors}
+                            id={sortableId}
+                        >
+                            <Table>
+                                <TableHeader className="sticky top-0 z-10 bg-muted">
+                                    {table
+                                        .getHeaderGroups()
+                                        .map((headerGroup) => (
+                                            <TableRow key={headerGroup.id}>
+                                                {headerGroup.headers.map(
+                                                    (header) => {
+                                                        return (
+                                                            <TableHead
+                                                                key={header.id}
+                                                                colSpan={
+                                                                    header.colSpan
+                                                                }
+                                                            >
+                                                                {header.isPlaceholder
+                                                                    ? null
+                                                                    : flexRender(
+                                                                          header
+                                                                              .column
+                                                                              .columnDef
+                                                                              .header,
+                                                                          header.getContext()
+                                                                      )}
+                                                            </TableHead>
+                                                        );
+                                                    }
+                                                )}
+                                            </TableRow>
                                         ))}
-                                    </SortableContext>
-                                ) : (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={columns.length}
-                                            className="h-24 text-center"
+                                </TableHeader>
+                                <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                                    {table.getRowModel().rows?.length ? (
+                                        <SortableContext
+                                            items={dataIds}
+                                            strategy={
+                                                verticalListSortingStrategy
+                                            }
                                         >
-                                            No results.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </DndContext>
+                                            {table
+                                                .getRowModel()
+                                                .rows.map((row) => (
+                                                    <DraggableRow
+                                                        key={row.id}
+                                                        row={row}
+                                                    />
+                                                ))}
+                                        </SortableContext>
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={columns.length}
+                                                className="h-24 text-center"
+                                            >
+                                                No results.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </DndContext>
+                    </div>
                 </div>
                 <div className="flex items-center justify-between px-4">
                     <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
@@ -558,10 +529,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
 
     return (
         <Sheet>
-            <SheetTrigger asChild className="text-left">
-                <Button variant="link" className="px-0 text-foreground">
+            <SheetTrigger asChild className="">
+                <div className="text-left items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground px-0 text-foreground">
                     {item.ArticleTitle}
-                </Button>
+                </div>
             </SheetTrigger>
         </Sheet>
     );
